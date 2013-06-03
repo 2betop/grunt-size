@@ -41,6 +41,9 @@ module.exports = function(grunt) {
           'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123'],
         },
       },
+      test: {
+        src: 'tasks/*.js'
+      }
     },
 
     // Unit tests.
