@@ -12,15 +12,11 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
-    jshint: {
-      all: [
-        'Gruntfile.js',
-        'tasks/*.js',
-        '<%= nodeunit.tests %>',
-      ],
-      options: {
-        jshintrc: '.jshintrc',
-      },
+    jsbint: {
+        all: ['tasks/*.js'],
+        options: {
+            jshintrc: '.jshintrc'
+        }
     },
 
     // Before generating any new files, remove any previously-created files.
@@ -39,8 +35,7 @@ module.exports = function(grunt) {
       },
       custom_options: {
         options: {
-          separator: ': ',
-          punctuation: ' !!!',
+          cols: [ 'filepath', 'origin', 'removecomments', 'uglify', 'uglify_gzip' ]
         },
         files: {
           'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123'],
@@ -59,7 +54,7 @@ module.exports = function(grunt) {
   grunt.loadTasks('tasks');
 
   // These plugins provide necessary tasks.
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-jsbint');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
