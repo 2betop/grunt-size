@@ -7,62 +7,79 @@ module.exports = function(grunt) {
         zlib = require( 'zlib' ),
         uglify = require('uglify-js'),
         sprintf = require('./lib/sprintf'),
+        Tempfile = require('temporary/lib/file'),
 
         handler = {
             filepath: function( filepath, dir ) {
+                dir = dir || '';
+                
                 return filepath;
             },
 
             origin: function( filepath, dir ) {
+                dir = dir || '';
+
                 return beatifySize(fs.statSync(dir + filepath).size);
             },
 
             uglify_gzip: function( filepath, dir ) {
+                dir = dir || '';
+
                 var content = uglify.minify( dir + filepath ).code,
+                    tmpfile = new Tempfile(),
                     size;
 
-                file.write( dir + '.tmpSize2', content );
-                return this.gzip( '.tmpSize2', dir )
+                file.write( tmpfile.path, content );
+                return this.gzip( tmpfile.path )
                         .then( function( value ) {
-                            file.delete( dir + '.tmpSize2' );
+                            tmpfile.unlink();
                             return value;
                         });
             },
 
             removecomments: function(filepath, dir) {
+                dir = dir || '';
+
                 var content = file.read(dir + filepath),
+                    tmpfile = new Tempfile(),
                     size;
 
-                file.write(dir + '.tmpSize', removeComments(content));
+                file.write(tmpfile.path, removeComments(content));
 
-                size = fs.statSync(dir + '.tmpSize').size;
+                size = fs.statSync(tmpfile.path).size;
 
-                file.delete( dir + '.tmpSize' );
+                tmpfile.unlink();
 
                 return beatifySize(size);
             },
 
             uglify: function(filepath, dir) {
+                dir = dir || '';
+
                 var content = uglify.minify(dir + filepath).code,
+                    tmpfile = new Tempfile(),
                     size;
 
-                file.write(dir + '.tmpSize', content);
-                size = fs.statSync(dir + '.tmpSize').size;
-                file.delete(dir + '.tmpSize');
+                file.write(tmpfile.path, content);
+                size = fs.statSync(tmpfile.path).size;
+                tmpfile.unlink();
 
                 return beatifySize(size);
             },
 
             gzip: function(filepath, dir) {
+                dir = dir || '';
+
                 var me = this,
                     deferred = q.defer(),
                     gzip = zlib.createGzip(),
+                    tmpfile = new Tempfile(),
                     inp = fs.createReadStream( dir + filepath ),
-                    out = fs.createWriteStream( dir + '.tmpSize' );
+                    out = fs.createWriteStream( tmpfile.path );
 
                 out.on( 'close', function() {
-                    var value = me.origin( '.tmpSize', dir );
-                    file.delete(dir + '.tmpSize');
+                    var value = me.origin( tmpfile.path );
+                    tmpfile.unlink();
                     deferred.resolve( value );
                 } );
                 inp.pipe( gzip ).pipe( out );

@@ -1,7 +1,7 @@
 {
   "name": "grunt-size",
   "description": "The best Grunt plugin ever.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "homepage": "https://github.com/liaoxuezhi/grunt-size",
   "author": {
     "name": "liaoxuezhi",
@@ -29,7 +29,8 @@
   },
   "dependencies": {
     "uglify-js": "~2.2.5",
-    "q": "~0.9.4"
+    "q": "~0.9.4",
+    "temporary": "0.0.5"
   },
   "devDependencies": {
     "grunt-jsbint": "~0.0.4",
